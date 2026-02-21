@@ -2,45 +2,24 @@
 <widget id="com.mpks.ambulanmudiy" version="2.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Ambulanmu DIY</name>
     <description>Sistem Manajemen Pelayanan Ambulans - MPKS PWM DIY</description>
-    <author email="dev@mpks.or.id" href="https://mpks.or.id">MPKS PWM DIY</author>
-    <content src="Index_APK.html" />
+    <author email="dev@mpks.or.id">MPKS PWM DIY</author>
+    <content src="index.html" />
 
-    <!-- Network Access -->
     <access origin="*" />
-    <access origin="https://script.google.com" />
-    <access origin="https://cdn.jsdelivr.net" />
-    <access origin="https://cdnjs.cloudflare.com" />
-    <access origin="https://fonts.googleapis.com" />
-    <access origin="https://fonts.gstatic.com" />
-    <access origin="https://lh3.googleusercontent.com" />
-    <access origin="https://docs.google.com" />
-    <access origin="https://drive.google.com" />
-
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />
-    <allow-intent href="sms:*" />
-    <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
     <allow-navigation href="*" />
 
-    <!-- Preferences -->
     <preference name="DisallowOverscroll" value="true" />
     <preference name="MixedContentMode" value="2" />
     <preference name="android-minSdkVersion" value="22" />
-    <preference name="android-targetSdkVersion" value="34" />
-    <preference name="StatusBarOverlaysWebView" value="false" />
+    <preference name="android-targetSdkVersion" value="33" />
     <preference name="StatusBarBackgroundColor" value="#1B5E20" />
-    <preference name="StatusBarStyle" value="lightcontent" />
-    <preference name="BackgroundColor" value="#F0F4F0" />
     <preference name="LoadUrlTimeoutValue" value="30000" />
 
     <platform name="android">
         <allow-intent href="market:*" />
-        <preference name="android-targetSdkVersion" value="34" />
-        <preference name="GradlePluginKotlinEnabled" value="true" />
-        <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application">
-            <application android:usesCleartextTraffic="true" />
-        </edit-config>
     </platform>
 </widget>
