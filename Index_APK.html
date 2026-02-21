@@ -283,7 +283,7 @@
     </div>
     <form id="loginForm">
       <div class="mb-2"><label class="form-label fw-semibold" style="font-size:0.8rem;">Username</label><input type="text" class="form-control" id="loginU" required placeholder="Masukkan username" style="border-radius:8px;padding:9px 12px;font-size:0.9rem;"></div>
-      <div class="mb-3"><label class="form-label fw-semibold" style="font-size:0.8rem;">Password</label><input type="password" class="form-control" id="loginP" required placeholder="Masukkan password" style="border-radius:8px;padding:9px 12px;font-size:0.9rem;"></div>
+      <div class="mb-3"><label class="form-label fw-semibold" style="font-size:0.8rem;">Password</label><div style="position:relative;"><input type="password" class="form-control" id="loginP" required placeholder="Masukkan password" style="border-radius:8px;padding:9px 42px 9px 12px;font-size:0.9rem;"><button type="button" onclick="togglePw('loginP',this)" style="position:absolute;right:2px;top:50%;transform:translateY(-50%);background:none;border:none;padding:6px 10px;cursor:pointer;color:#78909C;font-size:1rem;" title="Lihat password"><i class="fas fa-eye"></i></button></div></div>
       <button type="submit" class="btn btn-prim w-100 fw-bold" style="border-radius:8px;font-size:0.9rem;padding:10px;"><i class="fas fa-sign-in-alt me-2"></i>Masuk</button>
     </form>
     <div class="text-center mt-3"><a href="https://wa.me/6285173171912" target="_blank" class="btn btn-sm w-100 fw-semibold" style="background:#25D366;color:#fff;border-radius:8px;font-size:0.8rem;padding:8px;"><i class="fab fa-whatsapp me-1" style="font-size:1rem;"></i>Hubungi Admin</a></div>
@@ -621,7 +621,7 @@
 <div class="modal fade" id="uMod" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header" style="background:linear-gradient(90deg,#2E7D32,#43A047);color:#fff"><h6 class="modal-title" id="uMT">Tambah User</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><form id="uFrm"><div class="modal-body"><input type="hidden" id="uRI">
   <div class="mb-2"><label class="form-label">Nama</label><input type="text" class="form-control" id="uNm" required></div>
   <div class="mb-2"><label class="form-label">Username</label><input type="text" class="form-control" id="uUn" required></div>
-  <div class="mb-2"><label class="form-label">Password</label><input type="password" class="form-control" id="uPw"></div>
+  <div class="mb-2"><label class="form-label">Password</label><div style="position:relative;"><input type="password" class="form-control" id="uPw" placeholder="Kosongkan jika tidak diubah" style="padding-right:42px;"><button type="button" onclick="togglePw('uPw',this)" style="position:absolute;right:2px;top:50%;transform:translateY(-50%);background:none;border:none;padding:6px 10px;cursor:pointer;color:#78909C;font-size:1rem;" title="Lihat password"><i class="fas fa-eye"></i></button></div></div>
   <div class="mb-2"><label class="form-label">Role</label><select class="form-select" id="uRl" required onchange="togUF()"><option value="Super Admin">Super Admin</option><option value="Admin Daerah">Admin Daerah</option><option value="Admin Wilayah">Admin Wilayah</option><option value="Admin TL">Admin TL</option></select></div>
   <div class="mb-2" id="uWG"><label class="form-label">Wilayah</label><select class="form-select" id="uWl"><option value="">-</option><option>Kota Yogyakarta</option><option>Sleman</option><option>Bantul</option><option>Gunung Kidul</option><option>Kulon Progo</option></select></div>
   <div class="mb-2" id="uTG"><label class="form-label">Kode TL</label><select class="form-select" id="uKTL"><option value="">Pilih TL...</option></select></div>
@@ -1732,6 +1732,20 @@ function removeAnnImg(){
       }).withFailureHandler(onE).removeAnnouncementImage();
     }
   });
+}
+
+function togglePw(id, btn) {
+  var inp = document.getElementById(id);
+  var ico = btn.querySelector('i');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    ico.classList.remove('fa-eye');
+    ico.classList.add('fa-eye-slash');
+  } else {
+    inp.type = 'password';
+    ico.classList.remove('fa-eye-slash');
+    ico.classList.add('fa-eye');
+  }
 }
 </script>
 </body>

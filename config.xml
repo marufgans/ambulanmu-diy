@@ -1,9 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.mpks.ambulanmudiy" version="2.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Ambulanmu DIY</name>
+    <n>Ambulanmu DIY</n>
     <description>Sistem Manajemen Pelayanan Ambulans - MPKS PWM DIY</description>
     <author email="dev@mpks.or.id">MPKS PWM DIY</author>
     <content src="index.html" />
+    <icon src="icon.png" />
 
     <access origin="*" />
     <allow-intent href="http://*/*" />

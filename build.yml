@@ -1,0 +1,59 @@
+name: Build Ambulanmu DIY APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Cordova
+        run: npm install -g cordova@12
+
+      - name: Init Cordova Project
+        run: |
+          cordova create cordova-build com.mpks.ambulanmudiy "Ambulanmu DIY"
+          cp Index_APK.html cordova-build/www/index.html
+          cp config.xml cordova-build/config.xml
+          cp icon.png cordova-build/icon.png
+
+      - name: Add Android Platform
+        working-directory: cordova-build
+        run: cordova platform add android@13 --no-telemetry
+
+      - name: Build Debug APK
+        working-directory: cordova-build
+        run: cordova build android --debug --no-telemetry
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AmbulAnmu-DIY-v2.0.0-debug
+          path: cordova-build/platforms/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+      - name: Build Summary
+        run: |
+          echo "## Ambulanmu DIY APK Build Selesai!" >> $GITHUB_STEP_SUMMARY
+          echo "Download APK dari Artifacts di atas" >> $GITHUB_STEP_SUMMARY
