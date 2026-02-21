@@ -31,28 +31,28 @@ jobs:
       - name: Install Cordova
         run: npm install -g cordova@12
 
+      - name: Init Cordova Project
+        run: |
+          cordova create cordova-build com.mpks.ambulanmudiy "Ambulanmu DIY"
+          cp Index_APK.html cordova-build/www/index.html
+          cp config.xml cordova-build/config.xml
+
       - name: Add Android Platform
+        working-directory: cordova-build
         run: cordova platform add android@13 --no-telemetry
 
       - name: Build Debug APK
+        working-directory: cordova-build
         run: cordova build android --debug --no-telemetry
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: AmbulAnmu-DIY-v2.0.0-debug
-          path: platforms/android/app/build/outputs/apk/debug/app-debug.apk
+          path: cordova-build/platforms/android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
       - name: Build Summary
         run: |
-          echo "## ✅ Ambulanmu DIY APK Build Selesai!" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Info | Detail |" >> $GITHUB_STEP_SUMMARY
-          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| App | Ambulanmu DIY |" >> $GITHUB_STEP_SUMMARY
-          echo "| Package | com.mpks.ambulanmudiy |" >> $GITHUB_STEP_SUMMARY
-          echo "| Version | 2.0.0 |" >> $GITHUB_STEP_SUMMARY
-          echo "| Build | Debug |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "⬇️ Download APK dari tab **Artifacts** di atas" >> $GITHUB_STEP_SUMMARY
+          echo "## Ambulanmu DIY APK Build Selesai!" >> $GITHUB_STEP_SUMMARY
+          echo "Download APK dari Artifacts di atas" >> $GITHUB_STEP_SUMMARY
