@@ -35,11 +35,13 @@ jobs:
         run: |
           cordova create cordova-build com.mpks.ambulanmudiy "Ambulanmu DIY"
           cp Index_APK.html cordova-build/www/index.html
-          cp config.xml cordova-build/config.xml
+          cp icon.png cordova-build/icon.png
 
       - name: Add Android Platform
         working-directory: cordova-build
-        run: cordova platform add android@13 --no-telemetry
+        run: |
+          cp ../config.xml config.xml
+          cordova platform add android@13 --no-telemetry
 
       - name: Build Debug APK
         working-directory: cordova-build
