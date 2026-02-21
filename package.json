@@ -1,0 +1,11 @@
+{
+  "name": "ambulanmu-diy",
+  "displayName": "Ambulanmu DIY",
+  "version": "2.0.0",
+  "description": "Sistem Manajemen Pelayanan Ambulans MPKS PWM DIY",
+  "cordova": {
+    "platforms": [
+      "android"
+    ]
+  }
+}
