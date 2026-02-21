@@ -3,53 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <script>
-/* ============================================================
-   google.script.run POLYFILL - Ambulanmu DIY APK
-   ============================================================ */
+/* GAS APK Polyfill v2 - Fixed redirect & CORS handling */
 (function(){
-  var GAS_URL="https://script.google.com/macros/s/AKfycbxQt96yymfWn7vsxtjI6DwyH5KWBsQ7_UsMCle5_YbotmkZjXdh8F9EObM1wo2LhH23/exec";
-  function Runner(){
-    this._s=function(){};
-    this._f=function(e){console.error("[GAS-APK]",e);};
-  }
-  Runner.prototype.withSuccessHandler=function(fn){this._s=fn;return this;};
-  Runner.prototype.withFailureHandler=function(fn){this._f=fn;return this;};
-  function mkProxy(r){
-    return new Proxy(r,{
-      get:function(t,p){
-        if(p in t) return t[p].bind(t);
-        return function(){
-          var args=Array.prototype.slice.call(arguments);
-          fetch(GAS_URL,{
-            method:"POST",
-            headers:{"Content-Type":"text/plain;charset=utf-8"},
-            body:JSON.stringify({action:p,args:args})
-          })
-          .then(function(res){return res.json();})
-          .then(function(d){
-            if(d&&d.error){t._f(new Error(d.error));}
-            else{t._s(d&&d.data!==undefined?d.data:d);}
-          })
-          .catch(function(err){t._f(err);});
-        };
+  var GAS_URL = "https://script.google.com/macros/s/AKfycbxQt96yymfWn7vsxtjI6DwyH5KWBsQ7_UsMCle5_YbotmkZjXdh8F9EObM1wo2LhH23/exec";
+
+  function callGAS(action, args, onSuccess, onFailure) {
+    var body = JSON.stringify({ action: action, args: args });
+    
+    // Method 1: Direct POST
+    fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: body,
+      redirect: 'follow'
+    })
+    .then(function(res) {
+      var ct = res.headers.get('content-type') || '';
+      if (ct.indexOf('json') !== -1 || ct.indexOf('text') !== -1) {
+        return res.text();
       }
+      throw new Error('Response bukan JSON. Status: ' + res.status + ' URL: ' + res.url);
+    })
+    .then(function(text) {
+      var d;
+      try { d = JSON.parse(text); } 
+      catch(e) { throw new Error('Gagal parse JSON: ' + text.substring(0, 200)); }
+      
+      if (d && d.error) { onFailure(new Error(d.error)); }
+      else { onSuccess(d && d.data !== undefined ? d.data : d); }
+    })
+    .catch(function(err) {
+      console.error('[GAS-APK] Error action=' + action + ':', err.message);
+      onFailure(err);
     });
   }
-  window.google={
-    script:{
-      run:new Proxy({},{
-        get:function(_,p){
-          var r=mkProxy(new Runner());
-          if(p==='withSuccessHandler'||p==='withFailureHandler') return r[p].bind(r);
-          return r[p];
+
+  function Runner() {
+    this._s = function(r) { console.log('[GAS-APK] Success:', r); };
+    this._f = function(e) { console.error('[GAS-APK] Fail:', e); };
+    this._action = null;
+  }
+  Runner.prototype.withSuccessHandler = function(fn) { this._s = fn; return this; };
+  Runner.prototype.withFailureHandler = function(fn) { this._f = fn; return this; };
+
+  window.google = {
+    script: {
+      run: new Proxy({}, {
+        get: function(_, action) {
+          if (action === 'withSuccessHandler') {
+            return function(fn) {
+              var r = new Runner(); r._s = fn;
+              return new Proxy(r, {
+                get: function(t, p) {
+                  if (p === 'withFailureHandler') return function(fn2) { t._f = fn2; return new Proxy(t, {
+                    get: function(t2, p2) {
+                      if (p2 in t2) return typeof t2[p2] === 'function' ? t2[p2].bind(t2) : t2[p2];
+                      return function() { callGAS(p2, Array.from(arguments), t2._s, t2._f); };
+                    }
+                  }); };
+                  if (p in t) return typeof t[p] === 'function' ? t[p].bind(t) : t[p];
+                  return function() { callGAS(p, Array.from(arguments), t._s, t._f); };
+                }
+              });
+            };
+          }
+          if (action === 'withFailureHandler') {
+            return function(fn) {
+              var r = new Runner(); r._f = fn;
+              return new Proxy(r, {
+                get: function(t, p) {
+                  if (p === 'withSuccessHandler') return function(fn2) { t._s = fn2; return new Proxy(t, {
+                    get: function(t2, p2) {
+                      if (p2 in t2) return typeof t2[p2] === 'function' ? t2[p2].bind(t2) : t2[p2];
+                      return function() { callGAS(p2, Array.from(arguments), t2._s, t2._f); };
+                    }
+                  }); };
+                  if (p in t) return typeof t[p] === 'function' ? t[p].bind(t) : t[p];
+                  return function() { callGAS(p, Array.from(arguments), t._s, t._f); };
+                }
+              });
+            };
+          }
+          // Direct call tanpa handler
+          return function() { callGAS(action, Array.from(arguments), function(){}, function(){}); };
         }
       }),
-      history:{push:function(){},replace:function(){}},
-      host:{close:function(){window.history.back();},setHeight:function(){},setWidth:function(){}},
-      url:{getLocation:function(cb){cb({href:window.location.href});}}
+      history: { push: function(){}, replace: function(){} },
+      host: { close: function(){ window.history.back(); }, setHeight: function(){}, setWidth: function(){} },
+      url: { getLocation: function(cb){ cb({href: window.location.href}); } }
     }
   };
-  console.log("[GAS-APK] Polyfill aktif → "+GAS_URL);
+
+  console.log('[GAS-APK v2] Polyfill aktif → ' + GAS_URL);
 })();
   </script>
   <title>Ambulanmu DIY</title>
